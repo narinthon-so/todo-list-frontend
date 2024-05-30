@@ -51,11 +51,23 @@ const App: React.FC = () => {
     }
   };
 
+  const renameTodo = async (id: number, newTitle: string) => {
+    try {
+      const todo = todos.find(t => t.id === id);
+      if (todo) {
+        const response = await updateTodo(id, newTitle, todo.completed);
+        setTodos(todos.map(t => (t.id === id ? response.data : t)));
+      }
+    } catch (error) {
+      console.error('Error renaming todo:', error);
+    }
+  };
+
   return (
     <div className="App">
       <h1>To-Do List</h1>
       <TodoForm addTodo={addTodo} />
-      <TodoList todos={todos} toggleComplete={toggleComplete} deleteTodo={removeTodo} />
+      <TodoList todos={todos} toggleComplete={toggleComplete} deleteTodo={removeTodo} renameTodo={renameTodo} />
     </div>
   );
 };
