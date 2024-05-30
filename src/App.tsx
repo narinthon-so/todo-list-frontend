@@ -1,26 +1,63 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import TodoForm from './components/TodoForm';
+import TodoList from './components/TodoList';
+import { getTodos, createTodo, updateTodo, deleteTodo } from './api/todoApi';
+import { Todo } from './models/todo';
 import './App.css';
 
-function App() {
+const App: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  const fetchTodos = async () => {
+    try {
+      const response = await getTodos();
+      setTodos(response.data);
+    } catch (error) {
+      console.error('Error fetching todos:', error);
+    }
+  };
+
+  const addTodo = async (title: string) => {
+    try {
+      const response = await createTodo(title);
+      setTodos([...todos, response.data]);
+    } catch (error) {
+      console.error('Error adding todo:', error);
+    }
+  };
+
+  const toggleComplete = async (id: number, completed: boolean) => {
+    try {
+      const todo = todos.find(t => t.id === id);
+      if (todo) {
+        const response = await updateTodo(id, todo.title, completed);
+        setTodos(todos.map(t => (t.id === id ? response.data : t)));
+      }
+    } catch (error) {
+      console.error('Error updating todo:', error);
+    }
+  };
+
+  const removeTodo = async (id: number) => {
+    try {
+      await deleteTodo(id);
+      setTodos(todos.filter(t => t.id !== id));
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>To-Do List</h1>
+      <TodoForm addTodo={addTodo} />
+      <TodoList todos={todos} toggleComplete={toggleComplete} deleteTodo={removeTodo} />
     </div>
   );
-}
+};
 
 export default App;
