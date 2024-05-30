@@ -8,7 +8,6 @@ const TodoForm: React.FC<TodoFormProps> = ({ addTodo }) => {
   const [title, setTitle] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
-    console.log(`title = ${title}`)
     e.preventDefault();
     addTodo(title);
     setTitle('');
