@@ -45,5 +45,5 @@ jobs:
             sudo docker stop todo-list-fe &&
             sudo docker rm todo-list-fe &&
             sudo docker image prune -f &&
-            sudo docker run -d -p 3000:3000 --name todo-list-fe narinthonso/todo-list-fe:latest
+            sudo docker run -d -p 3001:3001 --name todo-list-fe narinthonso/todo-list-fe:latest
           "
